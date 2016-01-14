@@ -9,7 +9,7 @@ A very small, simple and fast EJS compiler.
 
 ```
 > var Ejs = new require('nano-ejs');
-> console.log(new Ejs().push_ejs('test <?=one?>').end().compile()('ola'));
+> console.log(new Ejs().push_ejs('test <?=one?>').end().compile('one')('ola'));
 test ola
 > _
 ```
