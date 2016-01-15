@@ -157,7 +157,7 @@ suite('new Ejs() // default options', function () {
 	]);
 
 	massive('compile and execute with <?=expression?>', function (text) {
-		return new Ejs().push_ejs(text).compile()("-one-", "-two-");
+		return new Ejs().push_ejs(text).compile('one,two')("-one-", "-two-");
 	}, [
 		"wrwrwerwer", "wrwrwerwer",
 		"wrwr<?='5'?>werwer", "wrwr5werwer",
@@ -168,7 +168,7 @@ suite('new Ejs() // default options', function () {
 	]);
 
 	massive('compile and execute with <?.id()?>', function (text) {
-		return new Ejs().push_ejs(text).compile()("-one-", "-two-");
+		return new Ejs().push_ejs(text).compile('one,two')("-one-", "-two-");
 	}, [
 		"wrwr<?.parseInt('45')?>werwer", "wrwr45werwer",
 		"<?.parseInt('4')?>werwer", "4werwer",
@@ -177,20 +177,28 @@ suite('new Ejs() // default options', function () {
 	]);
 
 	massive('compile and execute with <? JS-CODE ?>', function (text) {
-		return new Ejs().push_ejs(text).compile()("-one-", "-two-");
+		return new Ejs().push_ejs(text).compile('one,two')("-one-", "-two-");
 	}, [
 		"wr'wr\n<? /* JS */ ?>werwer", "wr'wr\nwerwer",
 		"wrwr-<? for (var c = 4; c; --c) {\n\t?>(<?=c?> werwer)<?\n}?>", "wrwr-(4 werwer)(3 werwer)(2 werwer)(1 werwer)"
 	]);
 
-/*	massive('rgb -> hsv', function () {
-		return round_hsv(c.rgb2hsv.apply(c, arguments));
-	}, rgb_vs_hsv_samples, 10, 10);
-
-	massive_reversed('hsv -> rgb', function () {
-		return round_rgb(c.hsv2rgb.apply(c, arguments));
-	}, rgb_vs_hsv_samples, 10, 10);
-*/
+	massive('Ejs.compile(text, args, opts)', function (text) {
+		return Ejs.compile(text, "one,two")("-one-", "-two-");
+	}, [
+		"wrwrwerwer", "wrwrwerwer",
+		"wrwr<?='5'?>werwer", "wrwr5werwer",
+		"wrwr<?=888?>werwer", "wrwr888werwer",
+		"<?=one?>werwer", "-one-werwer",
+		"qweqwe<?=two?>", "qweqwe-two-",
+		"<?=888?>", "888",
+		"wrwr<?.parseInt('45')?>werwer", "wrwr45werwer",
+		"<?.parseInt('4')?>werwer", "4werwer",
+		"qweqwe<?.parseFloat('5.5')?>", "qweqwe5.5",
+		"<?.parseInt('23423')?>", "23423",
+		"wr'wr\n<? /* JS */ ?>werwer", "wr'wr\nwerwer",
+		"wrwr-<? for (var c = 4; c; --c) {\n\t?>(<?=c?> werwer)<?\n}?>", "wrwr-(4 werwer)(3 werwer)(2 werwer)(1 werwer)"
+	]);
 
 });
 
@@ -253,7 +261,7 @@ suite('new Ejs({ open_str: "<%", close_str: "%>", global_id: "window" })', funct
 	]);
 
 	massive('compile and execute with <%=expression%>', function (text) {
-		return new Ejs(o).push_ejs(text).compile()("-one-", "-two-");
+		return new Ejs(o).push_ejs(text).compile('one,two')("-one-", "-two-");
 	}, [
 		"wrwrwerwer", "wrwrwerwer",
 		"wrwr<%='5'%>werwer", "wrwr5werwer",
@@ -264,7 +272,7 @@ suite('new Ejs({ open_str: "<%", close_str: "%>", global_id: "window" })', funct
 	]);
 
 	massive('compile and execute with <%.id()%>', function (text) {
-		return new Ejs(o).push_ejs(text).compile()("-one-", "-two-");
+		return new Ejs(o).push_ejs(text).compile('one,two')("-one-", "-two-");
 	}, [
 		"wrwr<%.parseInt('45')%>werwer", "wrwr45werwer",
 		"<%.parseInt('4')%>werwer", "4werwer",
@@ -273,19 +281,27 @@ suite('new Ejs({ open_str: "<%", close_str: "%>", global_id: "window" })', funct
 	]);
 
 	massive('compile and execute with <% JS-CODE %>', function (text) {
-		return new Ejs(o).push_ejs(text).compile()("-one-", "-two-");
+		return new Ejs(o).push_ejs(text).compile('one,two')("-one-", "-two-");
 	}, [
 		"wr'wr\n<% /* JS */ %>werwer", "wr'wr\nwerwer",
 		"wrwr-<% for (var c = 4; c; --c) {\n\t%>(<%=c%> werwer)<%\n}%>", "wrwr-(4 werwer)(3 werwer)(2 werwer)(1 werwer)"
 	]);
 
-/*	massive('rgb -> hsv', function () {
-		return round_hsv(c.rgb2hsv.apply(c, arguments));
-	}, rgb_vs_hsv_samples, 10, 10);
-
-	massive_reversed('hsv -> rgb', function () {
-		return round_rgb(c.hsv2rgb.apply(c, arguments));
-	}, rgb_vs_hsv_samples, 10, 10);
-*/
+	massive('Ejs.compile(text, args, opts)', function (text) {
+		return Ejs.compile(text, "one,two", o)("-one-", "-two-");
+	}, [
+		"wrwrwerwer", "wrwrwerwer",
+		"wrwr<%='5'%>werwer", "wrwr5werwer",
+		"wrwr<%=888%>werwer", "wrwr888werwer",
+		"<%=one%>werwer", "-one-werwer",
+		"qweqwe<%=two%>", "qweqwe-two-",
+		"<%=888%>", "888",
+		"wrwr<%.parseInt('45')%>werwer", "wrwr45werwer",
+		"<%.parseInt('4')%>werwer", "4werwer",
+		"qweqwe<%.parseFloat('5.5')%>", "qweqwe5.5",
+		"<%.parseInt('23423')%>", "23423",
+		"wr'wr\n<% /* JS */ %>werwer", "wr'wr\nwerwer",
+		"wrwr-<% for (var c = 4; c; --c) {\n\t%>(<%=c%> werwer)<%\n}%>", "wrwr-(4 werwer)(3 werwer)(2 werwer)(1 werwer)"
+	]);
 
 });

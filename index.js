@@ -21,14 +21,14 @@ function Ejs(options) {
 	    close_str_len = close_str.length,
 	    global_id = options.global_id || 'global',
 
-	    push_expr = this.push_expr = function _push_expr() {
+	    push_expr = /*this.push_expr = */function _push_expr() {
 			code.push(text_mode ? ", " : "$.push(");
 			code.push.apply(code, arguments);
 			text_mode = true;
 			return this;
 		},
 
-	     push_string = this.push_string = function _push_string(str) {
+	    push_string = /*this.push_string = */function _push_string(str) {
 			code.push(
 				!text_mode ? "$.push('" : ", '",
 				str.replace(/[\\'\n]/g, /*'*/function (match) {
@@ -111,5 +111,8 @@ function Ejs(options) {
 Ejs.prototype = {
 };
 
+Ejs.compile = function (text, args, opts) {
+	return new Ejs(opts).push_ejs(text).compile(args);
+};
 
 module.exports = Ejs;
