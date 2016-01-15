@@ -45,7 +45,7 @@ test ola
 
 The same as ```<?=global.function()?>```, where 'global' can be redefined by EJS object option 'global_id'.
 
-That construction useful then you pass some of object to EJS function like...
+This construction useful then you pass a some object to EJS function like...
 ```js
 var Ejs = require('nano-ejs'),
     css_helpers = require('css-helpers'); // hypotetical module
