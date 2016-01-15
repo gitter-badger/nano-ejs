@@ -114,6 +114,11 @@ Returns compiled JS function of EJS source.
 
 Returns JavaScript code translated from EJS.
 
+```
+> console.log(new (require('nano-ejs'))().push_ejs('text<?=5?>--').push_code().listing());
+$.push('text', 5+'', '--');
+> _
+```
 
 [gitter-image]: https://badges.gitter.im/Holixus/nano-ejs.png
 [gitter-url]: https://gitter.im/Holixus/nano-ejs
