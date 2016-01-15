@@ -12,7 +12,7 @@ A very small, simple and fast EJS compiler.
 
 ## Usage
 
-```
+```js
 > var Ejs = require('nano-ejs');
 > console.log(Ejs.compile('test <?=one?>', 'one')('ola'));
 test ola
@@ -23,21 +23,21 @@ test ola
 
 ### Ejs.compile(text[, args[, options]])
 
-* text `String` -- EJS text
-* args `String` -- compiled function arguments list (for ```new Function (args, body)``)
+* text `String` EJS text
+* args `String` compiled function arguments list (for ```new Function (args, body)```)
 * options `Object`
- * open_str `String` -- 
- * close_str `String` --
- * global_id `String` -- 
+ * open_str `String` open embedded JS code symbols sequence (the default value is '<?')
+ * close_str `String` clode embedded JS code symbols sequence (the default value is '?>')
+ * global_id `String` identifier of global object (like `global` or `window`) (the default value is 'global')
 
 ### class: Ejs
 
 #### new Ejs(options)
 
 * options `Object`
- * open_str `String` -- 
- * close_str `String` --
- * global_id `String` -- 
+ * open_str `String` open embedded JS code symbols sequence (the default value is '<?')
+ * close_str `String` clode embedded JS code symbols sequence (the default value is '?>')
+ * global_id `String` identifier of global object (like `global` or `window`) (the default value is 'global')
 
 #### .is_ejs(text)
 
@@ -47,15 +47,15 @@ Check the text for EJS injections. Returns ```true``` for EJS texts.
 
 #### .push_ejs(text)
 
-* text `String` -- EJS text
+* text `String` EJS text
 
 #### .push_js(text)
 
-* text `String` -- JS text
+* text `String` JS text
 
 #### .compile(args)
 
-* args `String` -- compiled function arguments list (for ```new Function (args, body)``)
+* args `String` compiled function arguments list (for ```new Function (args, body)``)
 
 #### .listing()
 
