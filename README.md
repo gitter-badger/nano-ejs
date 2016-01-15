@@ -23,21 +23,21 @@ test ola
 
 ### Ejs.compile(text[, args[, options]])
 
-* text //String// -- EJS text
-* args //String// -- compiled function arguments list (for ```new Function (args, body)``)
+* text **String** -- EJS text
+* args **String** -- compiled function arguments list (for ```new Function (args, body)``)
 * options //Object//
-** open_str //String// -- 
-** close_str //String// --
-** global_id //String// -- 
+ * open_str //String// -- 
+ * close_str //String// --
+ * global_id //String// -- 
 
 ### class: Ejs
 
 #### new Ejs(options)
 
 * options //Object//
-** open_str //String// -- 
-** close_str //String// --
-** global_id //String// -- 
+ * open_str //String// -- 
+ * close_str //String// --
+ * global_id //String// -- 
 
 #### .is_ejs(text)
 
