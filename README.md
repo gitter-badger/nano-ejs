@@ -56,6 +56,14 @@ var css_text = '\
 ';
 
 var ejs_fn = Ejs.compile(css_text, 'css_helpers', { global_id: 'css_helpers' });
+console.log(ejs_fn(css_helpers));
+```
+console output:
+```
+.error   { color: #FF0000; }\n\
+.warning { color: #00FF00; }\n\
+
+```
 
 ## API
 
