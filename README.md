@@ -62,7 +62,6 @@ console output:
 ```
 .error   { color: #FF0000; }\n\
 .warning { color: #00FF00; }\n\
-
 ```
 
 ## API
