@@ -14,12 +14,52 @@ A very small, simple and fast EJS compiler.
 
 ```
 > var Ejs = require('nano-ejs');
-> console.log(new Ejs().push_ejs('test <?=one?>').compile('one')('ola'));
+> console.log(Ejs.compile('test <?=one?>', 'one')('ola'));
 test ola
 > _
 ```
 
+## API
 
+### Ejs.compile(text[, args[, options]])
+
+* text //String// -- EJS text
+* args //String// -- compiled function arguments list (for ```new Function (args, body)``)
+* options //Object//
+** open_str //String// -- 
+** close_str //String// --
+** global_id //String// -- 
+
+### class: Ejs
+
+#### new Ejs(options)
+
+* options //Object//
+** open_str //String// -- 
+** close_str //String// --
+** global_id //String// -- 
+
+#### .is_ejs(text)
+
+return //Boolean//
+
+Check the text for EJS injections. Returns ```true``` for EJS texts.
+
+#### .push_ejs(text)
+
+* text //String// -- EJS text
+
+#### .push_js(text)
+
+* text //String// -- JS text
+
+#### .compile(args)
+
+* args //String// -- compiled function arguments list (for ```new Function (args, body)``)
+
+#### .listing()
+
+returns JavaScript code translated from EJS.
 
 [gitter-image]: https://badges.gitter.im/Holixus/nano-ejs.png
 [gitter-url]: https://gitter.im/Holixus/nano-ejs
