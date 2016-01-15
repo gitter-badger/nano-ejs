@@ -1,123 +1,115 @@
 "use strict";
 
-function parse(ejs, tpl, mode) {
-	var tpl = tpl,
-	    opener = ejs.options.opener || '<?',
-	    closer = ejs.options.closer || '?>',
-	    opener_len = opener.length,
-	    closer_len = closer.length,
-	    global_id = ejs.options.global_id || 'global';
-
-	var js = mode == 'js';
-
-	for (var pos = 0, js_pos = pos, len = tpl.length; pos < len;) {
-		if (!js) {
-			var js_pos = tpl.indexOf(opener, pos);
-			if (js_pos != pos)
-				ejs.push_string(tpl.slice(pos, (js_pos >= 0) ? js_pos : len));
-
-			if (js_pos < 0) {
-				pos = len;
-				continue;
-			}
-			js_pos += opener_len;
-		}
-
-		js = 0;
-		var js_end = tpl.indexOf(closer, js_pos);
-		if (js_end < 0)
-			js_end = len;
-		switch (tpl.charAt(js_pos)) {
-		case '=':
-			ejs.push_expr(tpl.slice(js_pos + 1, js_end), "+''");
-			break;
-		case '.':
-			ejs.push_expr(global_id, '.', tpl.slice(js_pos + 1, js_end), "+''");
-			break;
-		default:
-			ejs.push_code(tpl.slice(js_pos, js_end).trim(), '\n');
-		}
-		pos = js_end + closer_len;
-	}
-}
-
 /*
 	options = {
-		opener:  '<?',
-		closer: '?>',
-		post_process:  function (text) { return text.replace(/\n/g, '\n\r'); },
+		open_str:  '<?',
+		close_str: '?>',
 		global_id: 'global'
 	}
 */
 
 function Ejs(options) {
-	this.options = options || {};
-	this.code = [];
-	this.text_mode = false;
-	this.post_process = this.options.post_process || function (s) { return s; };
-	this.is_closed = 0;
+	if (!options)
+		options = {};
+
+	var code = [],
+	    text_mode = false,
+
+	    open_str = options.open_str || '<?',
+	    close_str = options.close_str || '?>',
+	    open_str_len = open_str.length,
+	    close_str_len = close_str.length,
+	    global_id = options.global_id || 'global',
+
+	    push_expr = this.push_expr = function _push_expr() {
+			code.push(text_mode ? ", " : "$.push(");
+			code.push.apply(code, arguments);
+			text_mode = true;
+			return this;
+		},
+
+	     push_string = this.push_string = function _push_string(str) {
+			code.push(
+				!text_mode ? "$.push('" : ", '",
+				str.replace(/[\\'\n]/g, /*'*/function (match) {
+					return match === '\n' ? "\\n\\\n" : '\\'+match;
+				}),
+				"'");
+			text_mode = true;
+			return this;
+		},
+
+	    push_code = this.push_code = function _push_code() {
+			if (text_mode)
+				code.push(");\n");
+			text_mode = false;
+			if (arguments.length)
+				code.push.apply(code, arguments);
+			return this;
+		};
+
+	function parse(tpl, mode) {
+		var tpl = tpl,
+		    js = mode == 'js';
+
+		for (var pos = 0, js_pos = pos, len = tpl.length; pos < len;) {
+			if (!js) {
+				var js_pos = tpl.indexOf(open_str, pos);
+				if (js_pos != pos)
+					push_string(tpl.slice(pos, (js_pos >= 0) ? js_pos : len));
+
+				if (js_pos < 0) {
+					pos = len;
+					continue;
+				}
+				js_pos += open_str_len;
+			}
+
+			js = 0;
+			var js_end = tpl.indexOf(close_str, js_pos);
+			if (js_end < 0)
+				js_end = len;
+			switch (tpl.charAt(js_pos)) {
+			case '=':
+				push_expr(tpl.slice(js_pos + 1, js_end), "+''");
+				break;
+			case '.':
+				push_expr(global_id, '.', tpl.slice(js_pos + 1, js_end), "+''");
+				break;
+			default:
+				push_code(tpl.slice(js_pos, js_end).trim(), '\n');
+			}
+			pos = js_end + close_str_len;
+		}
+	}
+
+	var push_ejs = this.push_ejs = function _push_ejs(tpl) {
+			parse(tpl, 'ejs');
+			return this;
+		},
+	    push_js = this.push_js = function _push_js(tpl) {
+			parse(tpl, 'js');
+			return this;
+		},
+	    listing = this.listing = function _listing() {
+			return code.join('');
+		},
+	    compile = this.compile = function _compile(args) {
+			code.unshift("var $=[];\n");
+			push_code("return $.join('');\n");
+			var f = new Function(args, listing());
+			code = [];
+			return f;
+		};
+
+	this.is_ejs = function (text) {
+		return text.indexOf(open_str) >= 0;
+	}
 }
 
+
 Ejs.prototype = {
-	push_expr: function () {
-		this.code.push(this.text_mode ? ", " : "$.push(");
-		this.code.push.apply(this.code, arguments);
-		this.text_mode = true;
-		return this;
-	},
-
-	push_string: function (str) {
-		this.code.push(
-			!this.text_mode ? "$.push('" : ", '",
-			this.post_process(str).replace(/[\\'\n]/g, /*'*/function (match) {
-				return match === '\n' ? "\\n\\\n" : '\\'+match;
-			}),
-			"'");
-		this.text_mode = true;
-		return this;
-	},
-
-	push_code: function () {
-		if (this.text_mode)
-			this.code.push(");\n");
-		this.text_mode = false;
-		if (arguments.length)
-			this.code.push.apply(this.code, arguments);
-		return this;
-	},
-
-	push_ejs: function (tpl) {
-		parse(this, tpl, 'ejs');
-		return this;
-	},
-
-	push_js: function (tpl) {
-		parse(this, tpl, 'js');
-		return this;
-	},
-
-	listing: function () {
-		return this.code.join('');
-	},
-
-	end: function () {
-		if (this.is_closed)
-			throw Error('closed already');
-		this.code.unshift("var $=[];\n");
-		this.push_code("return $.join('');\n");
-		this.is_closed = 1;
-		return this;
-	},
-
-	compile: function (args) {
-		if (!this.is_closed)
-			throw Error('not closed yet');
-		return new Function(args, this.listing());
-	},
-
-	is_ejs: function (text) {
-		return text.indexOf(this.options.begin || '<?') >= 0;
-	}
 };
+
 
 module.exports = Ejs;

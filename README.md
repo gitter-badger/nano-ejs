@@ -3,13 +3,18 @@
 A very small, simple and fast EJS compiler.
 
 
-[![NPM version][npm-image]][npm-url] [![Build status][travis-image]] [travis-url][![Test coverage][coveralls-image]] [coveralls-url] [![Dependency Status][david-image]][david-url] [![License][license-image]][license-url] [![Downloads][downloads-image]][downloads-url]
+[![NPM version][npm-image]][npm-url]
+[![Build status][travis-image]][travis-url]
+[![Test coverage][coveralls-image]][coveralls-url]
+[![Dependency Status][david-image]][david-url]
+[![License][license-image]][license-url]
+[![Downloads][downloads-image]][downloads-url]
 
 ## Usage
 
 ```
 > var Ejs = require('nano-ejs');
-> console.log(new Ejs().push_ejs('test <?=one?>').end().compile('one')('ola'));
+> console.log(new Ejs().push_ejs('test <?=one?>').compile('one')('ola'));
 test ola
 > _
 ```

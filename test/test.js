@@ -157,7 +157,7 @@ suite('new Ejs() // default options', function () {
 	]);
 
 	massive('compile and execute with <?=expression?>', function (text) {
-		return new Ejs().push_ejs(text).end().compile()("-one-", "-two-");
+		return new Ejs().push_ejs(text).compile()("-one-", "-two-");
 	}, [
 		"wrwrwerwer", "wrwrwerwer",
 		"wrwr<?='5'?>werwer", "wrwr5werwer",
@@ -168,7 +168,7 @@ suite('new Ejs() // default options', function () {
 	]);
 
 	massive('compile and execute with <?.id()?>', function (text) {
-		return new Ejs().push_ejs(text).end().compile()("-one-", "-two-");
+		return new Ejs().push_ejs(text).compile()("-one-", "-two-");
 	}, [
 		"wrwr<?.parseInt('45')?>werwer", "wrwr45werwer",
 		"<?.parseInt('4')?>werwer", "4werwer",
@@ -177,29 +177,107 @@ suite('new Ejs() // default options', function () {
 	]);
 
 	massive('compile and execute with <? JS-CODE ?>', function (text) {
-		return new Ejs().push_ejs(text).end().compile()("-one-", "-two-");
+		return new Ejs().push_ejs(text).compile()("-one-", "-two-");
 	}, [
 		"wr'wr\n<? /* JS */ ?>werwer", "wr'wr\nwerwer",
 		"wrwr-<? for (var c = 4; c; --c) {\n\t?>(<?=c?> werwer)<?\n}?>", "wrwr-(4 werwer)(3 werwer)(2 werwer)(1 werwer)"
 	]);
 
-	test('compile not closed code', function (done) {
-		try {
-			new Ejs().push_ejs("").compile()("-one-", "-two-");
-		} catch (e) {
-			return done();
-		}
-		return done(new Error('fail'));
-	});
+/*	massive('rgb -> hsv', function () {
+		return round_hsv(c.rgb2hsv.apply(c, arguments));
+	}, rgb_vs_hsv_samples, 10, 10);
 
-	test('double close', function (done) {
-		try {
-			new Ejs().push_ejs("").end().end().compile()("-one-", "-two-");
-		} catch (e) {
-			return done();
-		}
-		return done(new Error('fail'));
-	});
+	massive_reversed('hsv -> rgb', function () {
+		return round_rgb(c.hsv2rgb.apply(c, arguments));
+	}, rgb_vs_hsv_samples, 10, 10);
+*/
+
+});
+
+suite('new Ejs({ open_str: "<%", close_str: "%>", global_id: "window" })', function () {
+
+	var o = { open_str: "<%", close_str: "%>", global_id: "window" };
+
+	global.window = global;
+
+	massive('parsing with <%=expression%>', function (text) {
+		return new Ejs(o).push_ejs(text).push_code().listing();
+	}, [
+		"wrwrwerwer", "$.push('wrwrwerwer');\n",
+		"wrwr<%='5'%>werwer", "$.push('wrwr', '5'+'', 'werwer');\n",
+		"wrwr<%=888%>werwer", "$.push('wrwr', 888+'', 'werwer');\n",
+		"<%=888%>werwer", "$.push(888+'', 'werwer');\n",
+		"qweqwe<%=888%>", "$.push('qweqwe', 888+'');\n",
+		"<%=888%>", "$.push(888+'');\n"
+	]);
+
+	massive('parsing with <%.id()%>', function (text) {
+		return new Ejs(o).push_ejs(text).push_code().listing();
+	}, [
+		"wrwrwerwer", "$.push('wrwrwerwer');\n",
+		"wrwr<%.fn()%>werwer", "$.push('wrwr', window.fn()+'', 'werwer');\n",
+		"wrwr<%.ooo('4')%>werwer", "$.push('wrwr', window.ooo('4')+'', 'werwer');\n",
+		"<%.ogo(4)%>werwer", "$.push(window.ogo(4)+'', 'werwer');\n",
+		"qweqwe<%.job(true)%>", "$.push('qweqwe', window.job(true)+'');\n",
+		"<%.just(1.1)%>", "$.push(window.just(1.1)+'');\n"
+	]);
+
+	massive('parsing with <% JS-CODE %>', function (text) {
+		return new Ejs(o).push_ejs(text).push_code().listing();
+	}, [
+		"wrwrwerwer", "$.push('wrwrwerwer');\n",
+		"wr'wr\n<% /* JS */ %>werwer", "$.push('wr\\'wr\\n\\\n');\n/* JS */\n$.push('werwer');\n",
+		"wrwr<% while (1) {\n\t%>werwer<%\n}%>", "$.push('wrwr');\nwhile (1) {\n$.push('werwer');\n}\n",
+		"<% if (o) %>werwer", "if (o)\n$.push('werwer');\n",
+		"qweqwe<% var q = 1; %>", "$.push('qweqwe');\nvar q = 1;\n",
+		"<% /* only JS code */ \"use strict\"; %>", "/* only JS code */ \"use strict\";\n"
+	]);
+
+	massive('parsing JS %>test<%', function (text) {
+		return new Ejs(o).push_js(text).push_code().listing();
+	}, [
+		"wrwrwerwer", "wrwrwerwer\n",
+		"wrwrwerwer %>just test<% js-code", "wrwrwerwer\n$.push('just test');\njs-code\n",
+		"wrwrwerwer %>just test", "wrwrwerwer\n$.push('just test');\n"
+	]);
+
+	massive('is_ejs() method', function (text) {
+		return new Ejs(o).is_ejs(text);
+	}, [
+		"rwerwerwer", false,
+		"<%ere", true,
+		"ererer<%werwer", true,
+		"werwerw<%erwerwe%>werwerwer", true,
+		"werwer%>werwerwer", false,
+		"<%erwerwer%>", true
+	]);
+
+	massive('compile and execute with <%=expression%>', function (text) {
+		return new Ejs(o).push_ejs(text).compile()("-one-", "-two-");
+	}, [
+		"wrwrwerwer", "wrwrwerwer",
+		"wrwr<%='5'%>werwer", "wrwr5werwer",
+		"wrwr<%=888%>werwer", "wrwr888werwer",
+		"<%=888%>werwer", "888werwer",
+		"qweqwe<%=888%>", "qweqwe888",
+		"<%=888%>", "888"
+	]);
+
+	massive('compile and execute with <%.id()%>', function (text) {
+		return new Ejs(o).push_ejs(text).compile()("-one-", "-two-");
+	}, [
+		"wrwr<%.parseInt('45')%>werwer", "wrwr45werwer",
+		"<%.parseInt('4')%>werwer", "4werwer",
+		"qweqwe<%.parseFloat('5.5')%>", "qweqwe5.5",
+		"<%.parseInt('23423')%>", "23423"
+	]);
+
+	massive('compile and execute with <% JS-CODE %>', function (text) {
+		return new Ejs(o).push_ejs(text).compile()("-one-", "-two-");
+	}, [
+		"wr'wr\n<% /* JS */ %>werwer", "wr'wr\nwerwer",
+		"wrwr-<% for (var c = 4; c; --c) {\n\t%>(<%=c%> werwer)<%\n}%>", "wrwr-(4 werwer)(3 werwer)(2 werwer)(1 werwer)"
+	]);
 
 /*	massive('rgb -> hsv', function () {
 		return round_hsv(c.rgb2hsv.apply(c, arguments));
