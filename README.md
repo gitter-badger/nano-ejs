@@ -86,33 +86,34 @@ console output:
 
 EJS parser context.
 
-#### .is_ejs(text)
+#### ejs.is_ejs(text)
 
 return `Boolean`
 
 Check the text for EJS injections. Returns ```true``` for EJS texts.
 
-#### .push_ejs(text)
+#### ejs.push_ejs(text)
 
 * text `String` EJS text
 
 Parse EJS text and append to the final JS code.
 
-#### .push_js(text)
+#### ejs.push_js(text)
 
 * text `String` JS text
 
 Parse JS with texts injections (?>test<?) and append to the final JS code.
 
-#### .compile(args)
+#### ejs.compile(args)
 
 * args `String` compiled function arguments list (for ```new Function (args, body)``)
 
 Returns compiled JS function of EJS source.
 
-#### .listing()
+#### ejs.listing()
 
-returns JavaScript code translated from EJS.
+Returns JavaScript code translated from EJS.
+
 
 [gitter-image]: https://badges.gitter.im/Holixus/nano-ejs.png
 [gitter-url]: https://gitter.im/Holixus/nano-ejs

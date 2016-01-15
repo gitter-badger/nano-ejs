@@ -97,7 +97,7 @@ function Ejs(options) {
 	    compile = this.compile = function _compile(args) {
 			code.unshift("var $=[];\n");
 			push_code("return $.join('');\n");
-			var f = new Function(args, listing());
+			var f = new Function(args || '', listing());
 			code = [];
 			return f;
 		};

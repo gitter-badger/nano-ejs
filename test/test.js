@@ -281,7 +281,7 @@ suite('new Ejs({ open_str: "<%", close_str: "%>", global_id: "window" })', funct
 	]);
 
 	massive('compile and execute with <% JS-CODE %>', function (text) {
-		return new Ejs(o).push_ejs(text).compile('one,two')("-one-", "-two-");
+		return new Ejs(o).push_ejs(text).compile()();
 	}, [
 		"wr'wr\n<% /* JS */ %>werwer", "wr'wr\nwerwer",
 		"wrwr-<% for (var c = 4; c; --c) {\n\t%>(<%=c%> werwer)<%\n}%>", "wrwr-(4 werwer)(3 werwer)(2 werwer)(1 werwer)"
