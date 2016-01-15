@@ -43,7 +43,7 @@ test ola
 
 ### JS global calls embedding <?.function()?>
 
-The same as ```<?=global.function()?>```, where 'global' can redefined by EJS object option 'global_id'.
+The same as ```<?=global.function()?>```, where 'global' can be redefined by EJS object option 'global_id'.
 
 That construction useful then you pass some of object to EJS function like...
 ```js
