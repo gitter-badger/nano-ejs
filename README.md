@@ -9,6 +9,8 @@
 
 # nano-ejs
 
+[![Join the chat at https://gitter.im/Holixus/nano-ejs](https://badges.gitter.im/Holixus/nano-ejs.svg)](https://gitter.im/Holixus/nano-ejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A very small, simple and fast EJS compiler.
 
 
