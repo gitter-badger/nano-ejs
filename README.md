@@ -122,7 +122,7 @@ $.push('text', 5+'', '--');
 > _
 ```
 
-[gitter-image]: https://badges.gitter.im/Holixus/nano-ejs.png
+[gitter-image]: https://badges.gitter.im/Holixus/nano-ejs.svg
 [gitter-url]: https://gitter.im/Holixus/nano-ejs
 [npm-image]: https://img.shields.io/npm/v/nano-ejs.svg
 [npm-url]: https://npmjs.org/package/nano-ejs
